@@ -12,5 +12,8 @@
     "resolveJsonModule": true,
     "types": ["node"]
   },
-  "include": ["api/src"]
+  "include": ["api/src"],
+  "exclude": ["node_modules", "dist"]
+
+
 }
