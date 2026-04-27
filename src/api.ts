@@ -2,7 +2,10 @@ export async function handleUpload(file: File) {
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetch("http://localhost:3000/chat/upload", {
+    const API_URL = import.meta.env.VITE_API_URL;
+
+
+  const response = await fetch(`${API_URL}/chat/upload`, {
     method: "POST",
     body: formData,
   });

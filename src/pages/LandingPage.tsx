@@ -35,7 +35,7 @@ const LandingPage = () => {
         <div className="logo">Chat Chunker</div>
 
         <a
-          href="https://github.com/YOUR_REPO_LINK"
+          href="https://github.com/mehakbhardwaj1029-ops/document-chunker"
           target="_blank"
           rel="noreferrer"
         >
