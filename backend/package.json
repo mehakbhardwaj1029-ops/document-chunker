@@ -8,7 +8,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch api/src/index.ts",
-    "build": "tsc -p tsconfig.json",
+    "build": "npm install --save-dev && tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "db:check": "tsx src/utils/testDbConnection.ts",
     "db:check:node": "node dist/utils/testDbConnection.js"
