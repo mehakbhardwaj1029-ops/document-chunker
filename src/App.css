@@ -1,0 +1,12 @@
+.main{
+  background-color: linear-gradient(rgb(15, 15, 64),rgb(38, 37, 37));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-upload-btn{
+  background-color: rgb(15, 15, 116);
+  border-radius: 20px;
+  border-color: bisque;
+}
