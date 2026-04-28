@@ -50,23 +50,29 @@ const LandingPage = () => {
       {/* CENTER */}
       <div className="container">
         {/* DROP ZONE */}
-        <div
-          className={`drop-zone ${dragActive ? "active" : ""}`}
-          onDragOver={(e) => {
-            e.preventDefault();
-            setDragActive(true);
-          }}
-          onDragLeave={() => setDragActive(false)}
-          onDrop={onDrop}
-          onClick={() =>
-            document.getElementById("fileInput")?.click()
-          }
-        >
-          <p className="drop-text">
-            Drag & Drop your file here <br />
-            or click to upload
-          </p>
-        </div>
+       <div
+  className={`drop-zone ${dragActive ? "active" : ""}`}
+  onDragOver={(e) => {
+    e.preventDefault();
+    setDragActive(true);
+  }}
+  onDragLeave={() => setDragActive(false)}
+  onDrop={onDrop}
+  onClick={() =>
+    document.getElementById("fileInput")?.click()
+  }
+>
+  {file ? (
+    <p className="file-name">
+      📄 {file.name}
+    </p>
+  ) : (
+    <p className="drop-text">
+      Drag & Drop your file here <br />
+      or click to upload
+    </p>
+  )}
+</div>
 
         {/* FILE INPUT */}
         <input

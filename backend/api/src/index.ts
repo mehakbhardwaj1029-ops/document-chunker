@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import Fastify from 'fastify';
 import multipart from "@fastify/multipart";
 import fileRoutes from './routes/file.routes';
@@ -6,11 +8,14 @@ import cors from '@fastify/cors';
 const app = Fastify({logger: true});
 
   const API_URL = process.env.CORS_ORIGIN;
+  console.log(API_URL);
 
 
 app.register(cors, {
   origin: API_URL,
   methods: ["GET", "POST"],
+  exposedHeaders: ["Content-Disposition"],
+
 });
 app.register(multipart);
 app.register(fileRoutes, {prefix: "/chat"});
