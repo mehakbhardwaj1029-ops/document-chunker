@@ -5,6 +5,10 @@ import "./LandingPage.css";
 const LandingPage = () => {
   const [file, setFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
+  const [showApi, setShowApi] = useState(false);
+
+  const API_LINK =
+    "https://document-chunker.onrender.com/chat/chunk/api";
 
   const handleFile = (f: File) => {
     setFile(f);
@@ -28,51 +32,103 @@ const LandingPage = () => {
     await handleUpload(file);
   };
 
+  const copyApi = async () => {
+    await navigator.clipboard.writeText(API_LINK);
+    alert("API copied");
+  };
+
   return (
     <div className="main">
       {/* TOP BAR */}
       <div className="top-bar">
         <div className="logo">Chat Chunker</div>
 
-        <a
-          href="https://github.com/mehakbhardwaj1029-ops/document-chunker"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/733/733553.png"
-            alt="github"
-            className="github-icon"
-          />
-        </a>
+        <div className="top-right">
+          <button
+            className="api-btn"
+            onClick={() => setShowApi(!showApi)}
+          >
+            API
+          </button>
+
+          <a
+            href="https://github.com/mehakbhardwaj1029-ops/document-chunker"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/733/733553.png"
+              alt="github"
+              className="github-icon"
+            />
+          </a>
+        </div>
       </div>
+
+      {/* API MODAL */}
+{showApi && (
+  <div className="api-overlay">
+    <div className="api-modal">
+
+      <button
+        className="close-btn"
+        onClick={() => setShowApi(false)}
+      >
+        ✕
+      </button>
+
+      <h2 className="api-title">
+        Chunking API
+      </h2>
+
+      <div className="api-box">
+        <span className="api-link">
+          {API_LINK}
+        </span>
+
+        <button
+          className="copy-btn"
+          onClick={copyApi}
+        >
+          📋
+        </button>
+      </div>
+
+      <p className="api-note">
+        Call this API to chunk your document.
+      </p>
+
+    </div>
+  </div>
+)}
+      
 
       {/* CENTER */}
       <div className="container">
         {/* DROP ZONE */}
-       <div
-  className={`drop-zone ${dragActive ? "active" : ""}`}
-  onDragOver={(e) => {
-    e.preventDefault();
-    setDragActive(true);
-  }}
-  onDragLeave={() => setDragActive(false)}
-  onDrop={onDrop}
-  onClick={() =>
-    document.getElementById("fileInput")?.click()
-  }
->
-  {file ? (
-    <p className="file-name">
-      📄 {file.name}
-    </p>
-  ) : (
-    <p className="drop-text">
-      Drag & Drop your file here <br />
-      or click to upload
-    </p>
-  )}
-</div>
+        <div
+          className={`drop-zone ${dragActive ? "active" : ""}`}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragActive(true);
+          }}
+          onDragLeave={() => setDragActive(false)}
+          onDrop={onDrop}
+          onClick={() =>
+            document.getElementById("fileInput")?.click()
+          }
+        >
+          {file ? (
+            <p className="file-name">
+              📄 {file.name}
+            </p>
+          ) : (
+            <p className="drop-text">
+              Drag & Drop your file here <br />
+              or click to upload
+            </p>
+          )}
+        </div>
 
         {/* FILE INPUT */}
         <input
@@ -88,7 +144,10 @@ const LandingPage = () => {
         />
 
         {/* BUTTON */}
-        <button onClick={onUploadClick} className="upload-btn">
+        <button
+          onClick={onUploadClick}
+          className="upload-btn"
+        >
           Upload & Download Chunks
         </button>
       </div>
