@@ -17,7 +17,11 @@ app.register(cors, {
   exposedHeaders: ["Content-Disposition"],
 
 });
-app.register(multipart);
+app.register(multipart, {
+   limits: {
+      fileSize: 50 * 1024 * 1024 // 50 MB
+   }
+});
 app.register(fileRoutes, {prefix: "/chat"});
 
 

@@ -22,7 +22,7 @@ export async function apiChunkController(
       });
   }
 
-  const buffer = await file.toBuffer();
+  const buffer = await file.toBuffer();  //loads entire buffer file into ram
 
   const text = buffer.toString("utf-8");
 
