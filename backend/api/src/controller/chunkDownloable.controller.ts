@@ -37,7 +37,10 @@ export async function fileUploadController(
              `attachment; filename="${baseName}-exports.zip"`,
 
         "Access-Control-Allow-Origin":
+        [
                 "http://localhost:5173",
+                "https://document-chunker.netlify.app"
+        ],
      });
      
         // create zip archive
