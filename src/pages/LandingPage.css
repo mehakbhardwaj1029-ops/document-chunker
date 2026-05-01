@@ -30,6 +30,12 @@
   -webkit-text-fill-color: transparent;
 }
 
+.top-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
 .github-icon {
   width: 28px;
   height: 28px;
@@ -41,6 +47,22 @@
 .github-icon:hover {
   opacity: 1;
   transform: scale(1.1);
+}
+
+.api-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-size: 14px;
+}
+
+.api-btn:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: #4facfe;
 }
 
 .container {
@@ -83,6 +105,18 @@
   line-height: 1.5;
 }
 
+.file-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #4facfe;
+  text-align: center;
+  word-break: break-all;
+}
+
+.hidden-input {
+  display: none;
+}
+
 .upload-btn {
   padding: 12px 22px;
   border: none;
@@ -104,38 +138,7 @@
   transform: scale(0.96);
 }
 
-.hidden-input {
-  display: none;
-}
-.file-name {
-  font-size: 15px;
-  font-weight: 500;
-  color: #4facfe;
-  text-align: center;
-  word-break: break-all;
-}
-
-.top-right {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
-.api-btn {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.15);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.2s ease;
-  font-size: 14px;
-}
-
-.api-btn:hover {
-  background: rgba(255,255,255,0.08);
-  border-color: #4facfe;
-}
+/* API MODAL */
 
 .api-overlay {
   position: fixed;
@@ -149,14 +152,14 @@
 }
 
 .api-modal {
-  width: 720px;
+  width: 760px;
   background: #0b1120;
   border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 22px;
-  padding: 34px;
+  border-radius: 24px;
+  padding: 36px;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 28px;
   position: relative;
   box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   animation: popup 0.25s ease;
@@ -178,8 +181,8 @@
   position: absolute;
   top: 18px;
   right: 18px;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   border: none;
   background: rgba(255,255,255,0.06);
@@ -195,45 +198,95 @@
 }
 
 .api-title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 600;
   color: #4facfe;
 }
+
+/* API SECTION */
+
+.api-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.api-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #7dd3fc;
+  letter-spacing: 0.3px;
+}
+
+/* API BOX */
 
 .api-box {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 16px;
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 18px;
+  transition: 0.2s ease;
+}
+
+.api-box:hover {
+  border-color: rgba(79, 172, 254, 0.4);
+  background: rgba(79, 172, 254, 0.04);
 }
 
 .api-link {
+  flex: 1;
   color: white;
   font-size: 14px;
   line-height: 1.6;
   word-break: break-all;
+  opacity: 0.92;
 }
 
+/* COPY BUTTON */
+
 .copy-btn {
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  min-width: 46px;
+  height: 46px;
   border: none;
-  border-radius: 10px;
-  padding: 10px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: #001018;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  font-size: 16px;
   transition: 0.2s ease;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
 .copy-btn:hover {
   transform: scale(1.08);
+  box-shadow: 0 10px 22px rgba(79, 172, 254, 0.28);
 }
+
+.copy-btn:active {
+  transform: scale(0.96);
+}
+
 
 .api-note {
   font-size: 14px;
-  opacity: 0.7;
-  line-height: 1.6;
+  opacity: 0.72;
+  line-height: 1.7;
+  color: #cbd5e1;
+}
+
+.copy-btn.copied {
+  background: linear-gradient(135deg, #22c55e, #4ade80);
+  color: white;
+  transform: scale(1.05);
+}
+
+.copy-btn svg {
+  transition: 0.2s ease;
 }

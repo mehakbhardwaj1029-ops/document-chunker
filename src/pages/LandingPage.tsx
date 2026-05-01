@@ -1,14 +1,22 @@
 import { useState } from "react";
 import { handleUpload } from "../api";
+import { FiCopy, FiCheck } from "react-icons/fi";
 import "./LandingPage.css";
 
 const LandingPage = () => {
+
   const [file, setFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [showApi, setShowApi] = useState(false);
 
+  // tracks which API was copied
+  const [copiedApi, setCopiedApi] = useState<string | null>(null);
+
   const API_LINK =
     "https://document-chunker.onrender.com/chat/chunk/api";
+
+  const MESSAGE_API_LINK =
+    "https://document-chunker.onrender.com/chat/chunk/message/api";
 
   const handleFile = (f: File) => {
     setFile(f);
@@ -24,26 +32,43 @@ const LandingPage = () => {
   };
 
   const onUploadClick = async () => {
+
     if (!file) {
-      alert("Select a file first");
       return;
     }
 
     await handleUpload(file);
   };
 
-  const copyApi = async () => {
-    await navigator.clipboard.writeText(API_LINK);
-    alert("API copied");
+  const copyApi = async (link: string) => {
+
+    try {
+
+      await navigator.clipboard.writeText(link);
+
+      setCopiedApi(link);
+
+      setTimeout(() => {
+        setCopiedApi(null);
+      }, 1200);
+
+    } catch (error) {
+      console.error("Copy failed");
+    }
   };
 
   return (
     <div className="main">
+
       {/* TOP BAR */}
       <div className="top-bar">
-        <div className="logo">Chat Chunker</div>
+
+        <div className="logo">
+          Chat Chunker
+        </div>
 
         <div className="top-right">
+
           <button
             className="api-btn"
             onClick={() => setShowApi(!showApi)}
@@ -62,72 +87,132 @@ const LandingPage = () => {
               className="github-icon"
             />
           </a>
+
         </div>
       </div>
 
       {/* API MODAL */}
-{showApi && (
-  <div className="api-overlay">
-    <div className="api-modal">
+      {showApi && (
 
-      <button
-        className="close-btn"
-        onClick={() => setShowApi(false)}
-      >
-        ✕
-      </button>
+        <div className="api-overlay">
 
-      <h2 className="api-title">
-        Chunking API
-      </h2>
+          <div className="api-modal">
 
-      <div className="api-box">
-        <span className="api-link">
-          {API_LINK}
-        </span>
+            <button
+              className="close-btn"
+              onClick={() => setShowApi(false)}
+            >
+              ✕
+            </button>
 
-        <button
-          className="copy-btn"
-          onClick={copyApi}
-        >
-          📋
-        </button>
-      </div>
+            <h2 className="api-title">
+              Chunking APIs
+            </h2>
 
-      <p className="api-note">
-        Call this API to chunk your document.
-      </p>
+            {/* WORD CHUNKING */}
+            <div className="api-section">
 
-    </div>
-  </div>
-)}
-      
+              <p className="api-label">
+                Word Chunking API
+              </p>
+
+              <div className="api-box">
+
+                <span className="api-link">
+                  {API_LINK}
+                </span>
+
+                <button
+                  className={`copy-btn ${
+                    copiedApi === API_LINK ? "copied" : ""
+                  }`}
+                  onClick={() => copyApi(API_LINK)}
+                >
+                  {
+                    copiedApi === API_LINK
+                      ? <FiCheck />
+                      : <FiCopy />
+                  }
+                </button>
+
+              </div>
+            </div>
+
+            {/* MESSAGE CHUNKING */}
+            <div className="api-section">
+
+              <p className="api-label">
+                Message Chunking API
+              </p>
+
+              <div className="api-box">
+
+                <span className="api-link">
+                  {MESSAGE_API_LINK}
+                </span>
+
+                <button
+                  className={`copy-btn ${
+                    copiedApi === MESSAGE_API_LINK ? "copied" : ""
+                  }`}
+                  onClick={() => copyApi(MESSAGE_API_LINK)}
+                >
+                  {
+                    copiedApi === MESSAGE_API_LINK
+                      ? <FiCheck />
+                      : <FiCopy />
+                  }
+                </button>
+
+              </div>
+            </div>
+
+            <p className="api-note">
+              Use these APIs to generate chunks from uploaded chat files.
+            </p>
+
+          </div>
+        </div>
+      )}
 
       {/* CENTER */}
       <div className="container">
+
         {/* DROP ZONE */}
         <div
           className={`drop-zone ${dragActive ? "active" : ""}`}
+
           onDragOver={(e) => {
             e.preventDefault();
             setDragActive(true);
           }}
+
           onDragLeave={() => setDragActive(false)}
+
           onDrop={onDrop}
+
           onClick={() =>
             document.getElementById("fileInput")?.click()
           }
         >
-          {file ? (
-            <p className="file-name">
-              📄 {file.name}
-            </p>
-          ) : (
-            <p className="drop-text">
-              Drag & Drop your file here <br />
-              or click to upload
-            </p>
-          )}
+
+          {
+            file ? (
+
+              <p className="file-name">
+                📄 {file.name}
+              </p>
+
+            ) : (
+
+              <p className="drop-text">
+                Drag & Drop your file here
+                <br />
+                or click to upload
+              </p>
+            )
+          }
+
         </div>
 
         {/* FILE INPUT */}
@@ -136,20 +221,23 @@ const LandingPage = () => {
           type="file"
           className="hidden-input"
           accept=".txt"
+
           onChange={(e) => {
+
             if (e.target.files && e.target.files[0]) {
               handleFile(e.target.files[0]);
             }
           }}
         />
 
-        {/* BUTTON */}
+        {/* UPLOAD BUTTON */}
         <button
           onClick={onUploadClick}
           className="upload-btn"
         >
           Upload & Download Chunks
         </button>
+
       </div>
     </div>
   );
