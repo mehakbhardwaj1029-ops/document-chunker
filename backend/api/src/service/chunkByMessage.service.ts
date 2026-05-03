@@ -1,127 +1,148 @@
 import crypto from "crypto";
 
 export interface Chunk {
-    chunkId: string;
-    order: number;
-    wordCount: number;
-    tokenCount: number;
-    content: string;
+  chunkId: string;
+  order: number;
+  wordCount: number;
+  tokenCount: number;
+  content: string;
+}
+
+export interface ChunkResult {
+  chunks: Chunk[];
+  participants: string[];
 }
 
 export async function chunkByMessageService(
-    text: string,
-    tokenLimit: number = 1000
-): Promise<Chunk[]> {
+  text: string,
+  tokenLimit: number = 1000
+): Promise<ChunkResult> {
 
-    // Regex to detect timestamp
-    // 22/01/26, 3:52 pm -
-  
-
-   const messageStartRegex =
+  // Match each WhatsApp message block
+  const messageStartRegex =
     /(\d{2}\/\d{2}\/\d{2},\s\d{1,2}:\d{2}\s(?:am|pm)\s-\s.*?)(?=\d{2}\/\d{2}\/\d{2},\s\d{1,2}:\d{2}\s(?:am|pm)\s-|$)/gis;
 
-    const rawMessages = text.match(messageStartRegex)?.map(
-    msg => msg.trim()
-    ) || [];
+  const rawMessages =
+    text.match(messageStartRegex)?.map(msg => msg.trim()) || [];
 
-    const chunks: Chunk[] = [];
+  const chunks: Chunk[] = [];
 
-    let currentChunkMessages: string[] = [];
-    let currentTokenCount = 0;
-    let order = 1;
+  // Use Set to avoid duplicates
+  const participantSet = new Set<string>();
 
-    for (const message of rawMessages) {
+  let currentChunkMessages: string[] = [];
+  let currentTokenCount = 0;
+  let order = 1;
 
-        // Simple token estimation
-        // Later you can replace with tiktoken
-        const estimatedTokens = estimateTokens(message);
+  for (const message of rawMessages) {
 
-        // Edge case:
-        // single message itself exceeds token limit
-        if (estimatedTokens > tokenLimit) {
+    // Extract participant from every message
+    const sender = extractParticipant(message);
 
-            // save previous chunk first
-            if (currentChunkMessages.length > 0) {
-
-                const chunkContent = currentChunkMessages.join("\n");
-
-                chunks.push(createChunk(
-                    chunkContent,
-                    order++,
-                    currentTokenCount
-                ));
-
-                currentChunkMessages = [];
-                currentTokenCount = 0;
-            }
-
-            // store huge message separately
-            chunks.push(createChunk(
-                message,
-                order++,
-                estimatedTokens
-            ));
-
-            continue;
-        }
-
-        // Check if adding message exceeds limit
-        if (currentTokenCount + estimatedTokens > tokenLimit) {
-
-            // finalize current chunk
-            const chunkContent = currentChunkMessages.join("\n");
-
-            chunks.push(createChunk(
-                chunkContent,
-                order++,
-                currentTokenCount
-            ));
-
-            // start new chunk
-            currentChunkMessages = [];
-            currentTokenCount = 0;
-        }
-
-        // add message safely
-        currentChunkMessages.push(message);
-        currentTokenCount += estimatedTokens;
+    if (sender) {
+      participantSet.add(sender);
     }
 
-    // save remaining messages
-    if (currentChunkMessages.length > 0) {
+    const estimatedTokens = estimateTokens(message);
 
+    // Huge single message case
+    if (estimatedTokens > tokenLimit) {
+
+      if (currentChunkMessages.length > 0) {
         const chunkContent = currentChunkMessages.join("\n");
 
-        chunks.push(createChunk(
+        chunks.push(
+          createChunk(
             chunkContent,
             order++,
             currentTokenCount
-        ));
+          )
+        );
+
+        currentChunkMessages = [];
+        currentTokenCount = 0;
+      }
+
+      chunks.push(
+        createChunk(
+          message,
+          order++,
+          estimatedTokens
+        )
+      );
+
+      continue;
     }
 
-    return chunks;
+    // If chunk exceeds limit
+    if (currentTokenCount + estimatedTokens > tokenLimit) {
+
+      const chunkContent = currentChunkMessages.join("\n");
+
+      chunks.push(
+        createChunk(
+          chunkContent,
+          order++,
+          currentTokenCount
+        )
+      );
+
+      currentChunkMessages = [];
+      currentTokenCount = 0;
+    }
+
+    currentChunkMessages.push(message);
+    currentTokenCount += estimatedTokens;
+  }
+
+  // Final chunk
+  if (currentChunkMessages.length > 0) {
+    const chunkContent = currentChunkMessages.join("\n");
+
+    chunks.push(
+      createChunk(
+        chunkContent,
+        order++,
+        currentTokenCount
+      )
+    );
+  }
+
+  return {
+    chunks,
+    participants: Array.from(participantSet)
+  };
+}
+
+function extractParticipant(message: string): string | null {
+
+  // Example:
+  // 22/01/26, 3:52 pm - Rahul: Hello
+
+  const match = message.match(
+    /^\d{2}\/\d{2}\/\d{2},\s\d{1,2}:\d{2}\s(?:am|pm)\s-\s([^:]+):/i
+  );
+
+  if (!match) return null;
+
+  return match[1].trim();
 }
 
 function estimateTokens(text: string): number {
-
-    // rough approximation:
-    // 1 token ≈ 0.75 words
-    // OR 4 chars per token
-
-    return Math.ceil(text.split(/\s+/).length * 1.3);
+  return Math.ceil(text.split(/\s+/).length * 1.3);
 }
 
 function createChunk(
-    content: string,
-    order: number,
-    tokenCount: number
+  content: string,
+  order: number,
+  tokenCount: number
 ): Chunk {
 
-    return {
-        chunkId: crypto.randomUUID(),
-        order,
-        wordCount: content.split(/\s+/).length,
-        tokenCount,
-        content
-    };
+  return {
+    chunkId: crypto.randomUUID(),
+    order,
+    wordCount: content.split(/\s+/).length,
+    tokenCount,
+    content
+  };
 }
