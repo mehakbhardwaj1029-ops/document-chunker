@@ -1,5 +1,6 @@
 import { FastifyRequest,FastifyReply } from "fastify";
 import { chunkByMessageService } from "../service/chunkByMessage.service";
+import crypto from "crypto";
 
 export async function chunkByMessageController(
     request: FastifyRequest,
@@ -16,11 +17,16 @@ export async function chunkByMessageController(
 
     const text = buffer.toString("utf-8");
 
+    const fileHash = crypto.createHash("sha256").update(buffer).digest("hex");
+
     const tokenCount = 1000;
 
     const response = await chunkByMessageService(text, tokenCount);
 
-    return reply.status(200).send(response);
+    return reply.status(200).send({
+        ...response,
+        fileHash
+    });
 }
 catch(error: any){
 

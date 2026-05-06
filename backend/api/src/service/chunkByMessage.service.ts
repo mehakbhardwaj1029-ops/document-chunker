@@ -90,7 +90,7 @@ export async function chunkByMessageService(
       currentChunkMessages = [];
       currentTokenCount = 0;
     }
-
+    
     currentChunkMessages.push(message);
     currentTokenCount += estimatedTokens;
   }
